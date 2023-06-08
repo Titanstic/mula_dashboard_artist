@@ -1,0 +1,22 @@
+.typo {
+    background: #121fcf !important;
+    background: linear-gradient(
+            to right,
+            #121fcf 5%,
+            green 50%,
+            #cf1512 100%
+    ) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+}
+
+.logo_font {
+    font-size: 35px !important;
+    font-family: "Exo 2", sans-serif !important;
+}
+
+.login_btn {
+    transition: all 0.3s !important;
+    font-weight: 700 !important;
+    color: #000 !important;
+}
