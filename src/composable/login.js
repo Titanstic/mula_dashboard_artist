@@ -1,7 +1,7 @@
 import * as jose from "jose";
 
 const decodeUserToken = () => {
-    let userToken = window.localStorage.getItem("mulaloggedartisuser");
+    let userToken = window.localStorage.getItem("mulaloggeduser");
 
     if(userToken){
         return JSON.parse(userToken);
@@ -26,14 +26,24 @@ const checkLoginInput = (data) => {
 
 const generateUserToken = (result) => {
     const decodedToken = jose.decodeJwt(result.AdminLogIn.accessToken);
-    console.log(decodedToken);
-    // const data = JSON.stringify({
-    //     token: result.AdminLogIn.accessToken,
-    //     userID: decodedToken.user_id,
-    // });
-    // window.localStorage.setItem("mulaloggeduser", data);
+    const data = JSON.stringify({
+        token: result.AdminLogIn.accessToken,
+        userID: decodedToken.user_id,
+    });
+    window.localStorage.setItem("mulaloggeduser", data);
 
     return { decodedToken };
-}
+};
 
-export { decodeUserToken, checkLoginInput, generateUserToken };
+const checkUserToken = () => {
+    let userToken = window.localStorage.getItem("mulaloggeduser");
+
+    if(userToken){
+        let userData = JSON.parse(userToken);
+        let rowDecodeToken = jose.decodeJwt(userData.token);
+        userData = {...userData, "row": rowDecodeToken["https://hasura.io/jwt/claims"]["x-hasura-default-role"]};
+        return userData;
+    }
+};
+
+export { decodeUserToken, checkLoginInput, generateUserToken, checkUserToken };

@@ -6,15 +6,15 @@ import IconButton from "@mui/material/IconButton";
 import mulalogo from "../assets/icons/mulalogo.png";
 
 import "../style/login.css";
-import {useContext, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {LoadingButton} from "@mui/lab";
-import {checkLoginInput, generateUserToken} from "../composable/login";
+import {checkLoginInput, checkUserToken, generateUserToken} from "../composable/login";
 import {useMutation} from "@apollo/client";
 import {ADMIN_LOGIN} from "../gql/login";
 import {useNavigate} from "react-router-dom";
 import AlertContext from "../context/AlertContext";
 import ShowAlert from "../component/alert/ShowAlert";
-import AuthContext from "../context/AuthContext";
+import NavContext from "../context/NavContext";
 
 const LoginView = () => {
     const [formData, setFormData] = useState({
@@ -26,12 +26,23 @@ const LoginView = () => {
     const navigate = useNavigate();
     // useContext
     const { alert, showAlert } = useContext(AlertContext);
-    const {setRole} = useContext(AuthContext);
+    const { setNav } = useContext(NavContext);
+
+    // Start useEffect
+    useEffect(() => {
+        const userData = checkUserToken();
+
+        if(userData){
+            navigate("/art");
+        }
+    })
+    // End useEffect
 
     // Start Mutation
     const [adminLogin] = useMutation(ADMIN_LOGIN,{
         onError: (error) => {
             console.log(error);
+            showAlert("Something Wrong! Please Try again", true);
         },
         onCompleted: (result) => {
             if(result.AdminLogIn.error){
@@ -42,11 +53,11 @@ const LoginView = () => {
                 setError({});
                 setFormData({});
 
-                const { decodedToken } = generateUserToken(result);
-                setRole(decodedToken["https://hasura.io/jwt/claims"]["x-hasura-default-role"]);
+                generateUserToken(result);
 
                 showAlert("login successfully", false);
-                navigate("/profile");
+                setNav("nav")
+                navigate("/art");
             }
             setLoading(false);
         }
@@ -106,12 +117,12 @@ const LoginView = () => {
                     {/*Start Login Form*/}
                     <Box sx={{ display: "flex", flexDirection: "column" }}>
                         <FormControl style={{ borderRadius: "3px" }} sx={{ m: 2, width: "300px" }}>
-                            <TextField id="phone" label="Phone Number" size="large" variant="outlined" value={formData.phone} onChange={handleChange("phone")} error={error.phone ? true : false} helperText={error.phone}/>
+                            <TextField id="phone" label="Phone Number" size="large" variant="outlined" onChange={handleChange("phone")} error={error.phone ? true : false} helperText={error.phone}/>
                         </FormControl>
 
 
                         <FormControl style={{ borderRadius: "3px" }} sx={{ m: 2, width: "300px", backgroundColor: "#fff" }}>
-                            <TextField id="password" size="large" variant="outlined" type={formData.showPassword ? "text" : "password"} value={formData.password} onChange={handleChange("password")}
+                            <TextField id="password" size="large" variant="outlined" type={formData.showPassword ? "text" : "password"} onChange={handleChange("password")}
                                 InputProps={{
                                     endAdornment: (
                                         <InputAdornment position="end">

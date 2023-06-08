@@ -1,0 +1,45 @@
+.AppBar {
+    background-color: #f7f7f7;
+    padding: 1rem;
+    color: #000;
+    border: none;
+}
+
+.nav-list {
+    font-size: "18px";
+    padding: 1rem !important;
+    border-top: 0.1px solid #adadaf;
+}
+
+.nav-btn {
+    font-size: 1.2rem !important;
+}
+
+.nav-btn:hover {
+    background-color: #e4faf7 !important;
+    border-radius: 10px;
+    color: #1c1c1d;
+    font-weight: bold !important;
+}
+
+.nav-btn.active {
+  background-color: #e0eff6 !important;
+  border-radius: 10px;
+  color: #1c1c1d;
+  font-weight: bold !important;
+}
+
+.nav-btn:hover .nav-link-icon {
+    color: #000;
+}
+
+.dashboard,
+.nav-link,
+.user {
+    color: #7f7f80 !important;
+    text-decoration: none !important;
+}
+
+.nav-link-icon {
+    margin-left: 0.4rem;
+}

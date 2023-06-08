@@ -3,14 +3,17 @@ import {client} from "./hasura/config";
 import MainRouters from "./router/MainRouters";
 import {AlertContextProvider} from "./context/AlertContext";
 import {AuthContextProvider} from "./context/AuthContext";
+import {NavContextProvider} from "./context/NavContext";
 
 function App() {
       return (
           <ApolloProvider client={client}>
               <AuthContextProvider>
-                  <AlertContextProvider>
-                      <MainRouters/>
-                  </AlertContextProvider>
+                  <NavContextProvider>
+                      <AlertContextProvider>
+                          <MainRouters/>
+                      </AlertContextProvider>
+                  </NavContextProvider>
               </AuthContextProvider>
           </ApolloProvider>
       );
