@@ -9,11 +9,13 @@ import Menu from "@mui/material/Menu";
 import "../../style/layout.css";
 import {AppBar} from "../../composable/layout";
 import {useNavigate} from "react-router-dom";
-import {useState} from "react";
+import {useContext, useState} from "react";
+import AlertContext from "../../context/AlertContext";
 
 const Header = ({open, handleDrawerOpen}) => {
     const navigate = useNavigate();
     const [anchorEl, setAnchorEl] = useState(null);
+    const { showAlert } = useContext(AlertContext);
 
     // Start Function
     const handleMenu = (event) => {
@@ -26,6 +28,7 @@ const Header = ({open, handleDrawerOpen}) => {
 
     const handleLogout = () => {
         window.localStorage.removeItem("mulaloggeduser");
+        showAlert("Logout Successfully", false);
         navigate("/");
     };
     // End Function

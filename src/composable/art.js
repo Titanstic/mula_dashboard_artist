@@ -27,9 +27,9 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 const ModalStyled = {
     width: "95%",
     position: 'absolute',
-    top: '50%',
+    top: '2%',
     left: '50%',
-    transform: 'translate(-50%, -50%)',
+    transform: 'translateX(-50%)',
     bgcolor: 'background.paper',
     boxShadow: 24,
     pt: 2,
@@ -60,20 +60,20 @@ const fileTypes = [
 ];
 
 const checkImageError = (image) => {
-    let error = false,
+    let errorExist = false,
         errorDetail = "";
 
     if(!fileTypes.includes(image.type)){
-        error = true;
+        errorExist = true;
         errorDetail = "Please select image. (PNG, JPG, JPEG, GIF, ...)";
     }
 
     if(image.size > 10485760){
-        error = true;
+        errorExist = true;
         errorDetail = "Image file size must be smaller than 10MB.";
     }
 
-    return { error, errorDetail };
+    return { errorExist, errorDetail };
 };
 
 const uploadImageCloud = async(uri, data) => {
@@ -87,4 +87,51 @@ const uploadImageCloud = async(uri, data) => {
     return await axios.put(uri, data, config);
 };
 
-export { StyledTableRow, StyledTableCell, ModalStyled, useStyles, checkImageError, uploadImageCloud }
+const checkArtInput = (data) => {
+    let errorExist = false;
+    const tempErrors = {};
+
+    if (!data.artwork_name) {
+        tempErrors.artwork_name = "Artwork Name is required.";
+        errorExist = true;
+    }
+    if (!data.artwork_image_url) {
+        tempErrors.artwork_image_url = "Image File is required.";
+        errorExist = true;
+    }
+    if (!data.artwork_year) {
+        tempErrors.artwork_year = "Artwork Year is required.";
+        errorExist = true;
+    }
+    if (!data.fk_medium_type_id) {
+        tempErrors.fk_medium_type_id = "Artwork Type is required.";
+        errorExist = true;
+    }
+    // if (!data.fk_art_series_id) {
+    //     tempErrors.fk_art_series_id = "Artwork Series is required.";
+    //     errorExist = true;
+    // }
+    if (!data["length"]) {
+        tempErrors["length"] = "Length is required.";
+        errorExist = true;
+    }
+    if (!data["width"]) {
+        tempErrors["width"] = "Width is required.";
+        errorExist = true;
+    }
+    if (!data.current_price) {
+        tempErrors.current_price = "Price is required.";
+        errorExist = true;
+    }
+    if (!data.description) {
+        tempErrors.description = "Description is required.";
+        errorExist = true;
+    }
+
+    return { errorExist, tempErrors };
+
+};
+
+
+
+export { StyledTableRow, StyledTableCell, ModalStyled, useStyles, checkImageError, uploadImageCloud, checkArtInput }

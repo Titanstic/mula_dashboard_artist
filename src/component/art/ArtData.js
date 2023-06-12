@@ -3,10 +3,11 @@ import {Avatar, Button, Table, TableBody, TableContainer, TableHead, TablePagina
 import {StyledTableCell, StyledTableRow} from "../../composable/art";
 import {useContext, useEffect, useState} from "react";
 import AuthContext from "../../context/AuthContext";
+import loadingImage from "../../assets/image/loading.gif";
 
 const ArtData = ({loadTraditionalArt, resultTraditionalArt}) => {
     // useContext
-    const { artistId } = useContext(AuthContext);
+    const { userId } = useContext(AuthContext);
     // useState
     const [ arts, setArts ] = useState(null);
     const [count, setCount] = useState(0);
@@ -16,13 +17,13 @@ const ArtData = ({loadTraditionalArt, resultTraditionalArt}) => {
 
     // Start useEffect
     useEffect(() => {
-        loadTraditionalArt({ variables: { fk_artist_id: artistId}})
-    }, [loadTraditionalArt])
+        loadTraditionalArt({ variables: { fk_ownership_id: userId, limit: rowsPerPage, offset}})
+    }, [loadTraditionalArt, offset, rowsPerPage])
 
     useEffect(() => {
         if(resultTraditionalArt.data){
-            console.log(resultTraditionalArt.data.traditional_art_work);
             setArts(resultTraditionalArt.data.traditional_art_work);
+            setCount(resultTraditionalArt.data.traditional_art_work_aggregate.aggregate.count);
         }
     }, [resultTraditionalArt])
     // End useEffect
@@ -43,8 +44,8 @@ const ArtData = ({loadTraditionalArt, resultTraditionalArt}) => {
 
     return(
         <>
-            <Box sx={{ display: "flex", flexFlow: "wrap row", "& > :not(style)": {m: 1, width: "100%", minHeight: "25vh"}}}>
-                <TableContainer sx={{ maxHeight: "60vh", Width: "100px"}}>
+            <Box sx={{ display: "flex", flexFlow: "wrap row", "& > :not(style)": {m: 1, width: "100%"}}}>
+                <TableContainer sx={{ maxHeight: "70vh", Width: "100px",  border: "1px groove rgba(0,0,0,0.2)"}}>
                     <Table stickyHeader aria-label="sticky table">
                         <TableHead>
                             <StyledTableRow>
@@ -59,22 +60,31 @@ const ArtData = ({loadTraditionalArt, resultTraditionalArt}) => {
                         <TableBody>
                             {
                                 arts ?
-                                    arts.map( art => (
-                                        <StyledTableRow hover role="checkbox" tableindex={-1} key={art.id}>
-                                            <StyledTableCell>{art.id}</StyledTableCell>
-                                            <StyledTableCell>
-                                                <Avatar sx={{ width: 56, height: 56}} alt="test" src={art.artwork_image_url}/>
-                                            </StyledTableCell>
-                                            <StyledTableCell>{art.artwork_name}</StyledTableCell>
-                                            <StyledTableCell>{art.current_price.toLocaleString("en-US")}</StyledTableCell>
-                                            <StyledTableCell>
-                                                <Button size="small" sx={{ color: "red"}} fontWeight="bold">Detail</Button>
-                                            </StyledTableCell>
+                                    arts.length > 0 ?
+                                        arts.map( art => (
+                                            <StyledTableRow hover role="checkbox" tableindex={-1} key={art.id}>
+                                                <StyledTableCell>{art.id}</StyledTableCell>
+                                                <StyledTableCell>
+                                                    <Avatar sx={{ width: 56, height: 56}} alt="test" src={art.artwork_image_url}/>
+                                                </StyledTableCell>
+                                                <StyledTableCell>{art.artwork_name}</StyledTableCell>
+                                                <StyledTableCell>{Number(art.current_price).toLocaleString("en-US")}</StyledTableCell>
+                                                <StyledTableCell>
+                                                    <Button size="small" sx={{ color: "red"}} fontWeight="bold">Detail</Button>
+                                                </StyledTableCell>
+                                            </StyledTableRow>
+                                        ))
+                                        :
+                                        <StyledTableRow hover role="checkbox" tableindex={-1}>
+                                            <StyledTableCell sx={{ textAlign: "center", fontWeight: "bold" }} colSpan={5}>No Data</StyledTableCell>
                                         </StyledTableRow>
-                                    ))
                                     :
                                     <StyledTableRow hover role="checkbox" tableindex={-1}>
-                                        <StyledTableCell>Loading</StyledTableCell>
+                                        <StyledTableCell sx={{ textAlign: "center", fontWeight: "bold" }} colSpan={5}>
+                                            <span style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                                                <img src={loadingImage} width="20px" style={{ marginRight: "10px" }} alt="loading"/> Loading ...
+                                            </span>
+                                        </StyledTableCell>
                                     </StyledTableRow>
                             }
                         </TableBody>

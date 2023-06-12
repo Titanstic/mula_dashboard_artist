@@ -37,8 +37,7 @@ const ArtView = () => {
 
     return (
         <LayoutView>
-
-            <div>
+            <>
                 {/*Start Nav*/}
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "1rem"}}>
                     <Breadcrumbs aria-label="breadcrumb" fontWeight="bold" fontSize="1.2rem">
@@ -68,7 +67,7 @@ const ArtView = () => {
                 {
                     showCreate && <CreateArt showCreate={showCreate} createHandle={createHandle} resultTraditionalArt={resultTraditionalArt}/>
                 }
-            </div>
+            </>
         </LayoutView>
     )
 };

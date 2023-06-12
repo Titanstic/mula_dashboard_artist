@@ -6,7 +6,7 @@ const ShowAlert = () => {
     const {alert, alertError} = useContext(AlertContext);
 
     return (
-        <Alert sx={{ position: "absolute", bottom: "4em", right: "2em" }} severity={alertError ? "warning" : "success"}>
+        <Alert sx={{ position: "absolute", bottom: "4em", right: "2em", zIndex: "100000" }} severity={alertError ? "warning" : "success"}>
             {alert}
         </Alert>
     )
