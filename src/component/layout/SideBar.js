@@ -26,6 +26,10 @@ const SideBar = ({open}) => {
                     <Link to="/art" onClick={() => setNav("art")} className="nav-link">
                         <ListItem className={`nav-btn ${nav === "art" && "active"}`}><ListItemIcon><BrushIcon className="nav-link-icon"/></ListItemIcon>Art</ListItem>
                     </Link>
+
+                    <Link to="/artseries" onClick={() => setNav("series")} className="nav-link">
+                        <ListItem className={`nav-btn ${nav === "series" && "active"}`}><ListItemIcon><BrushIcon className="nav-link-icon"/></ListItemIcon>Art Series</ListItem>
+                    </Link>
             </List>
         </Drawer>
     )

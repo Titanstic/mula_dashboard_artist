@@ -5,7 +5,7 @@ import {useContext, useEffect, useState} from "react";
 import AuthContext from "../../context/AuthContext";
 import loadingImage from "../../assets/image/loading.gif";
 
-const ArtData = ({loadTraditionalArt, resultTraditionalArt}) => {
+const ArtData = ({detailHandle, editHandle, disableHandle, loadTraditionalArt, resultTraditionalArt}) => {
     // useContext
     const { userId } = useContext(AuthContext);
     // useState
@@ -53,6 +53,7 @@ const ArtData = ({loadTraditionalArt, resultTraditionalArt}) => {
                                 <StyledTableCell style={{minWidth: 70, fontWeight: "bold"}}>IMAGE</StyledTableCell>
                                 <StyledTableCell style={{minWidth: 70, fontWeight: "bold"}}>ART NAME</StyledTableCell>
                                 <StyledTableCell style={{minWidth: 70, fontWeight: "bold"}}>CURRENT PRICE</StyledTableCell>
+                                <StyledTableCell style={{minWidth: 70, fontWeight: "bold"}}>Status</StyledTableCell>
                                 <StyledTableCell style={{minWidth: 70, fontWeight: "bold"}}>ACTION</StyledTableCell>
                             </StyledTableRow>
                         </TableHead>
@@ -70,7 +71,12 @@ const ArtData = ({loadTraditionalArt, resultTraditionalArt}) => {
                                                 <StyledTableCell>{art.artwork_name}</StyledTableCell>
                                                 <StyledTableCell>{Number(art.current_price).toLocaleString("en-US")}</StyledTableCell>
                                                 <StyledTableCell>
-                                                    <Button size="small" sx={{ color: "red"}} fontWeight="bold">Detail</Button>
+                                                    <Button size="small" variant="contained" color={art.pending ? "warning" : "success"} sx={{ p: 1, cursor: "default"}}>{art.pending ? "pending" : "completed"}</Button>
+                                                </StyledTableCell>
+                                                <StyledTableCell>
+                                                    <Button size="small" variant="contained" sx={{ color: "white", p: 1, mr: 1}} fontWeight="bold" onClick={() => detailHandle(art)}>Detail</Button>
+                                                    <Button size="small" variant="contained" sx={{ color: "white", p: 1, mr: 1}} fontWeight="bold" onClick={() => editHandle(art)}>Edit</Button>
+                                                    <Button size="small" variant="contained" color={art.disabled ? "success" : "error"} sx={{ color: "white", p: 1, mr: 1}} fontWeight="bold" onClick={() => disableHandle(art)}>{art.disabled ? "Show" : "Not Show"}</Button>
                                                 </StyledTableCell>
                                             </StyledTableRow>
                                         ))
@@ -80,7 +86,7 @@ const ArtData = ({loadTraditionalArt, resultTraditionalArt}) => {
                                         </StyledTableRow>
                                     :
                                     <StyledTableRow hover role="checkbox" tableindex={-1}>
-                                        <StyledTableCell sx={{ textAlign: "center", fontWeight: "bold" }} colSpan={5}>
+                                        <StyledTableCell sx={{ textAlign: "center", fontWeight: "bold" }} colSpan={6}>
                                             <span style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                                                 <img src={loadingImage} width="20px" style={{ marginRight: "10px" }} alt="loading"/> Loading ...
                                             </span>

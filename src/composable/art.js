@@ -107,12 +107,8 @@ const checkArtInput = (data) => {
         tempErrors.fk_medium_type_id = "Artwork Type is required.";
         errorExist = true;
     }
-    // if (!data.fk_art_series_id) {
-    //     tempErrors.fk_art_series_id = "Artwork Series is required.";
-    //     errorExist = true;
-    // }
-    if (!data["length"]) {
-        tempErrors["length"] = "Length is required.";
+    if (!data["height"]) {
+        tempErrors["height"] = "Length is required.";
         errorExist = true;
     }
     if (!data["width"]) {

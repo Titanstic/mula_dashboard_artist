@@ -15,11 +15,18 @@ import ArtData from "../component/art/ArtData";
 import CreateArt from "../component/art/CreateArt";
 import {useLazyQuery} from "@apollo/client";
 import {GET_TRADITIONAL_ARTWORK_BY_ARITSTID} from "../gql/art";
+import ShowOrNotArt from "../component/art/ShowOrNotArt";
+import EditArt from "../component/art/EditArt";
+import DetailArt from "../component/art/DetailArt";
 
 
 const ArtView = () => {
     const { setNav } = useContext(NavContext);
     const [showCreate, setShowCreate] = useState(false);
+    const [showDetail, setShowDetail] = useState(false);
+    const [showEdit, setShowEdit] = useState(false);
+    const [showDisable, setShowDisable] = useState(false);
+    const [tempArtData, setTempArtData] = useState(null);
     // useLazyQuery
     const [ loadTraditionalArt, resultTraditionalArt ] = useLazyQuery(GET_TRADITIONAL_ARTWORK_BY_ARITSTID);
 
@@ -31,7 +38,22 @@ const ArtView = () => {
     // => For Create Handle
     const createHandle = () => {
         setShowCreate(!showCreate);
+    };
+
+    const detailHandle = (data) => {
+        setShowDetail(!showDetail);
+        setTempArtData(data);
+    };
+
+    const editHandle = (data) => {
+        setShowEdit(!showEdit);
+        setTempArtData(data);
     }
+
+    const disableHandle = (data) => {
+        setShowDisable(!showDisable);
+        setTempArtData(data);
+    };
 
     // End Function
 
@@ -61,12 +83,25 @@ const ArtView = () => {
                 {/*End Nav*/}
 
                 {/*Start Art Data*/}
-                <ArtData loadTraditionalArt={loadTraditionalArt} resultTraditionalArt={resultTraditionalArt} />
+                <ArtData detailHandle={detailHandle} editHandle={editHandle} disableHandle={disableHandle} loadTraditionalArt={loadTraditionalArt} resultTraditionalArt={resultTraditionalArt} />
                 {/*End Art Data*/}
 
                 {
                     showCreate && <CreateArt showCreate={showCreate} createHandle={createHandle} resultTraditionalArt={resultTraditionalArt}/>
                 }
+
+                {
+                    showDetail && <DetailArt detailHandle={detailHandle} showDetail={showDetail} tempArtData={tempArtData}/>
+                }
+
+                {
+                    showEdit && <EditArt editHandle={editHandle} showEdit={showEdit} tempArtData={tempArtData}/>
+                }
+
+                {
+                    showDisable && <ShowOrNotArt resultTraditionalArt={resultTraditionalArt} disableHandle={disableHandle} showDisable={showDisable} tempArtData={tempArtData} />
+                }
+
             </>
         </LayoutView>
     )

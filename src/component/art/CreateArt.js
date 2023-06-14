@@ -5,7 +5,7 @@ import FormControl from "@mui/material/FormControl";
 import {ModalStyled, useStyles, checkImageError, uploadImageCloud, checkArtInput} from "../../composable/art";
 import {useContext, useState, useEffect} from "react";
 import {useLazyQuery, useMutation} from "@apollo/client";
-import {GET_ARTWORK_DIMENSION, GET_ARTWORK_MEDIUM_TYPE, GET_ART_SERIES_BY_ARTIST, GET_IMAGE_UPLOAD_URL, INSERT_ART_TRADITIONAL} from "../../gql/art";
+import {GET_ARTWORK_DIMENSION, GET_ARTWORK_MEDIUM_TYPE, GET_ART_SERIES_BY_ARTIST, GET_IMAGE_UPLOAD_URL, INSERT_ARTIST_ART_SERIES, INSERT_ART_TRADITIONAL} from "../../gql/art";
 import MenuItem from "@mui/material/MenuItem";
 import AuthContext from "../../context/AuthContext";
 import { LoadingButton } from "@mui/lab";
@@ -14,17 +14,19 @@ import RichTextEditor from "react-rte";
 
 const CreateArt = ({showCreate, createHandle, resultTraditionalArt}) => {
     // useContext
-    const { userId } = useContext(AuthContext);
+    const { userId, artistId } = useContext(AuthContext);
     const { showAlert } = useContext(AlertContext);
     // useLazyQuery
     const [ loadArtType, resultArtType ] = useLazyQuery(GET_ARTWORK_MEDIUM_TYPE);
     const [ loadDimension, resultDimension ] = useLazyQuery(GET_ARTWORK_DIMENSION);
+    const [ loadArtSeries, resultArtSeries ] = useLazyQuery(GET_ART_SERIES_BY_ARTIST);
     // useState
     const [artData, setArtData] = useState({disabled: false, lengthunit: "cm", widthunit: "cm"});
     const [description, setDescription] = useState(RichTextEditor.createEmptyValue());
     const [imageFile, setImageFile] = useState(null);
     const [error, setError] = useState({});
     const [dimension, setDimension] = useState(null);
+    const [ artSeries, setArtSeries ] = useState(null);
     const [artType, setArtType] = useState(null);
     const [loading, setLoading] = useState(false);
 
@@ -41,6 +43,17 @@ const CreateArt = ({showCreate, createHandle, resultTraditionalArt}) => {
             setArtType(resultArtType.data.artwork_medium_type);
         }
     }, [resultArtType])
+
+    // For Art Series
+    useEffect(() => {
+        loadArtSeries({ variables: { fk_artist_id: artistId }})
+    }, [loadArtSeries])
+
+    useEffect(() => {
+        if(resultArtSeries.data){
+            setArtSeries(resultArtSeries.data.art_series);
+        }
+    }, [resultArtSeries])
 
     // For Art Dimension
     useEffect(() => {
@@ -71,10 +84,20 @@ const CreateArt = ({showCreate, createHandle, resultTraditionalArt}) => {
             showAlert(error.message, true);
         },
         onCompleted: (result) => {
-            console.log(result);
             createHandle();
             showAlert("Insert Successfully", false);
             resultTraditionalArt.refetch();
+            return result;
+        }
+    });
+
+    const [insertAritistArtSeries] = useMutation(INSERT_ARTIST_ART_SERIES, {
+        onError: (error) =>{
+            console.log(error);
+            showAlert(error.message, true);
+        },
+        onCompleted: (result) => {
+            console.log(result);
         }
     })
     // End Mutation
@@ -145,7 +168,7 @@ const toolbarConfig = {
 };
 
     const cancelBtn = () => {
-        setArtData({});
+        setArtData({disabled: false, lengthunit: "cm", widthunit: "cm"});
         setError({});
         createHandle();
     }
@@ -160,7 +183,11 @@ const toolbarConfig = {
             try{
                 const response = await getImageUploadUrl({variables: { contentType: "image/*"}});
                 await uploadImageCloud(response.data.getImageUploadUrl.imageUploadUrl, imageFile);
-                await insertArtTraditional({variables: {...artData, pending: "true", artwork_image_url: `https://axra.sgp1.digitaloceanspaces.com/Mula/${response.data.getImageUploadUrl.imageName}`, fk_ownership_id: userId, "dimensions": `${artData.length}${artData.lengthunit} x ${artData.width}${artData.widthunit}`}});
+                const artId = await insertArtTraditional({variables: {...artData, pending: "true", artwork_image_url: `https://axra.sgp1.digitaloceanspaces.com/Mula/${response.data.getImageUploadUrl.imageName}`, fk_ownership_id: userId, fk_artist_id: artistId, "dimensions": `${artData.width}${artData.fk_dimension} x ${artData.height}${artData.fk_dimension}`}});
+
+                if(artData.artwork_series){
+                    await insertAritistArtSeries({ variables: { fk_traditional_art_work_id: artId.data.insert_traditional_art_work_one.id, fk_art_series_id: artData.artwork_series}});
+                }
             }catch(e){
                 showAlert(e.message, true);
             }
@@ -190,9 +217,9 @@ const toolbarConfig = {
 
                                 <Box sx={{ display: "grid", gridTemplateColumns: "300px 300px 300px", gap: 2}}>
                                     <FormControl sx={{ mx: 1, my: 1, minWidth: "300px"}}>
-                                        <TextField variant="filled" id="artwork_name" onChange={(e) => handleInput(e.target.value, "artwork_name")} label="ArtWork Name" error={error.artwork_name ? true : false}/>
+                                        <TextField variant="filled" id="artwork_name" label="Artwork Name" onChange={(e) => handleInput(e.target.value, "artwork_name")} error={error.artwork_name ? true : false}/>
                                         {
-                                            error.artwork_name && <small style={{ display: "block", color: "red", position: "absolute", top: "100%", left: 5}}>{error.artwork_name}</small>
+                                            error.artwork_name && <small style={{ display: "block", color: "red", position: "absolute", top: "100%", left: 5 }}>{error.artwork_name}</small>
                                         }
                                     </FormControl>
 
@@ -207,6 +234,27 @@ const toolbarConfig = {
                                         <TextField variant="filled" id="artwork_year" label="Artwork Year" onChange={(e) => handleInput(e.target.value, "artwork_year")} error={error.artwork_year ? true : false}/>
                                         {
                                             error.artwork_year && <small style={{ display: "block", color: "red", position: "absolute", top: "100%", left: 5 }}>{error.artwork_year}</small>
+                                        }
+                                    </FormControl>
+
+                                    
+                                    <FormControl sx={{ mx: 1, my: 1, minWidth: "300px"}}>
+                                        <InputLabel id="artwork_series">Artwork Series</InputLabel>
+                                        <Select labelId="artwork_series" label="artwork_series" defaultValue="" onChange={(e) => handleInput(e.target.value, "artwork_series")}>
+                                            {
+                                                artSeries ?
+                                                    artSeries.length > 0 ?
+                                                        artSeries.map(s => (
+                                                            <MenuItem key={s.id} value={s.id}>{s.series_name}</MenuItem>
+                                                        ))
+                                                        :
+                                                        <MenuItem disabled>No Data</MenuItem>
+                                                    :
+                                                    <MenuItem disabled>Loading ...</MenuItem>
+                                            }
+                                        </Select>
+                                        {
+                                            error.fk_medium_type_id && <small style={{ display: "block", color: "red", position: "absolute", top: "100%", left: 5 }}>{error.fk_medium_type_id}</small>
                                         }
                                     </FormControl>
 
@@ -232,28 +280,15 @@ const toolbarConfig = {
 
                                     <FormControl sx={{ mx: 1, my: 1, minWidth: "300px"}}>
                                         <div style={{  display: "flex", justifyContent: "space-between" }}>
-                                            <TextField variant="filled" id="Length" label="Length" sx={{ maxWidth: "85px"}} onChange={(e) => handleInput(e.target.value, "length")} error={error["length"] ? true : false}/>
-                                            <Select labelId="unit" label="unit" defaultValue="cm" sx={{ maxWidth: "70px"}} onChange={(e) => handleInput(e.target.value, "lengthunit")}>
-                                                {
-                                                    dimension ?
-                                                        dimension.length > 0 ?
-                                                            dimension.map(d => (
-                                                                <MenuItem key={d.id} value={d.dimension_name}>{d.dimension_name}</MenuItem>
-                                                            ))
-                                                            :
-                                                            <MenuItem disabled>No Data</MenuItem>
-                                                        :
-                                                        <MenuItem disabled>Loading ...</MenuItem>
-                                                }
-                                            </Select>
+                                            <TextField variant="filled" id="Length" label="Length" sx={{ maxWidth: "85px"}} onChange={(e) => handleInput(e.target.value, "width")} error={error["width"] ? true : false}/>
+                                            <TextField variant="filled" id="Length" label="Width" sx={{ maxWidth: "100px"}} onChange={(e) => handleInput(e.target.value, "height")} error={error["height"] ? true : false}/>
 
-                                            <TextField variant="filled" id="Length" label="Width" sx={{ maxWidth: "100px"}} onChange={(e) => handleInput(e.target.value, "width")} error={error["width"] ? true : false}/>
-                                            <Select labelId="unit" label="unit" defaultValue="cm" sx={{ maxWidth: "70px"}} onChange={(e) => handleInput(e.target.value, "widthunit")}>
+                                            <Select labelId="unit" label="unit" defaultValue="cm" sx={{ maxWidth: "70px"}} onChange={(e) => handleInput(e.target.value, "fk_dimension")}>
                                                 {
                                                     dimension ?
                                                         dimension.length > 0 ?
                                                             dimension.map(d => (
-                                                                <MenuItem key={d.id} value={d.dimension_name}>{d.dimension_name}</MenuItem>
+                                                                <MenuItem key={d.id} value={d.id}>{d.dimension_name}</MenuItem>
                                                             ))
                                                             :
                                                             <MenuItem disabled>No Data</MenuItem>
