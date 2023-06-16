@@ -27,7 +27,7 @@ const ArtSeriesView = () => {
 
     //Start UseEffect
     useEffect(() => {
-        setNav("artistseries");
+        setNav("series");
     })
     // End UserEffect
 
