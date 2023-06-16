@@ -87,6 +87,7 @@ const uploadImageCloud = async(uri, data) => {
     return await axios.put(uri, data, config);
 };
 
+
 const checkArtInput = (data) => {
     let errorExist = false;
     const tempErrors = {};

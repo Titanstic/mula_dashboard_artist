@@ -14,6 +14,7 @@ import InputBase from "@mui/material/InputBase";
 import CreateArtSeries from "../component/artSeries/CreateArtSeries";
 import ArtSeriesData from "../component/artSeries/ArtSeriesData";
 import GqlContext from "../context/GqlContext";
+import EditArtSeries from "../component/artSeries/EditArtSeries";
 
 const ArtSeriesView = () => {
     // useConstext
@@ -21,6 +22,8 @@ const ArtSeriesView = () => {
     const { loadArtSeriesArtist, resultArtSeriesArtist } = useContext(GqlContext);
     // useState
     const [ showCreate, setShowCreate ] = useState(false);
+    const [ showEdit, setShowEdit ] = useState(false);
+    const [ tempData, setTempData ] = useState(null);
 
     //Start UseEffect
     useEffect(() => {
@@ -32,6 +35,12 @@ const ArtSeriesView = () => {
     // Start Function
     const createHandle = () => {
         setShowCreate(!showCreate);
+    };
+
+    const editHandle = (data) => {
+        console.log(data);
+        setShowEdit(!showEdit);
+        setTempData(data);
     }
     // End Function
 
@@ -61,11 +70,15 @@ const ArtSeriesView = () => {
                 {/*End Nav*/}
 
                 {/* Start Art Series Data */}
-                <ArtSeriesData loadArtSeriesArtist={loadArtSeriesArtist} resultArtSeriesArtist={resultArtSeriesArtist}/>
+                <ArtSeriesData loadArtSeriesArtist={loadArtSeriesArtist} resultArtSeriesArtist={resultArtSeriesArtist} editHandle={editHandle}/>
                 {/* End Art Series Data */}
 
                 {
                     showCreate && <CreateArtSeries showCreate={showCreate} createHandle={createHandle} resultArtSeriesArtist={resultArtSeriesArtist}/>
+                }
+
+                {
+                    showEdit && <EditArtSeries showEdit={showEdit} editHandle={editHandle} resultArtSeriesArtist={resultArtSeriesArtist} tempData={tempData}/>
                 }
             </>
         </LayoutView>

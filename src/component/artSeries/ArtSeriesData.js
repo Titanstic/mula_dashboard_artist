@@ -5,7 +5,7 @@ import {useContext, useEffect, useState} from "react";
 import AuthContext from "../../context/AuthContext";
 import loadingImage from "../../assets/image/loading.gif";
 
-const ArtSeriesData = ({loadArtSeriesArtist, resultArtSeriesArtist}) => {
+const ArtSeriesData = ({loadArtSeriesArtist, resultArtSeriesArtist, editHandle}) => {
     // useConstext
     const { artistId } = useContext(AuthContext);
     // useState
@@ -66,7 +66,9 @@ const ArtSeriesData = ({loadArtSeriesArtist, resultArtSeriesArtist}) => {
                                             <StyledTableCell>{s.series_thumbnail_url_id ? s.series_thumbnail_url_id : "-"}</StyledTableCell>
                                             <StyledTableCell>{s.series_name}</StyledTableCell>
                                             <StyledTableCell>{s.series_description ? s.series_description : "-"}</StyledTableCell>
-                                            <StyledTableCell>Action</StyledTableCell>
+                                            <StyledTableCell>
+                                                <Button size="small" variant="contained" sx={{ color: "white", p: 1, mr: 1}} fontWeight="bold" onClick={() => editHandle(s)}>Edit</Button>
+                                            </StyledTableCell>
                                         </StyledTableRow>
                                     ))
                                 :

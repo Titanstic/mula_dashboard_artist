@@ -4,8 +4,8 @@ import { Box, Button, Card, CardContent, CardMedia, Modal, Select, TextField, In
 import { useContext, useState } from "react";
 import MenuItem from "@mui/material/MenuItem";
 import {  useMutation } from "@apollo/client";
-import { checkArtInput, useStyles } from "../../composable/art";
-import { INSERT_ARTIST_ART_SERIES, UPDATE_ARTSERIES_BY_PK, UPDATE_ART_TRADITIONAL_BY_PK } from "../../gql/art";
+import { checkArtInput, checkImageError, uploadImageCloud, useStyles } from "../../composable/art";
+import { GET_IMAGE_UPLOAD_URL, INSERT_ARTIST_ART_SERIES, UPDATE_ARTSERIES_BY_PK, UPDATE_ART_TRADITIONAL_BY_PK } from "../../gql/art";
 import AlertContext from "../../context/AlertContext";
 
 
@@ -14,12 +14,24 @@ const EditArt = ({ resultTraditionalArt, editHandle, showEdit, tempArtData, dime
     const [ artData, setArtData ] = useState({ ...tempArtData, fk_dimension: tempArtData.traditional_artwork_dimension.id});
     const [ error, setError ] = useState({});
     const [loading, setLoading] = useState(false);
+    const [imageFile, setImageFile] = useState(null);
+
     // useContext
     const { showAlert } = useContext(AlertContext);
 
     const classes = useStyles();
 
     // Start Mutation
+    const [getImageUploadUrl] = useMutation(GET_IMAGE_UPLOAD_URL, {
+        onError: (error) =>{
+            console.log(error);
+            showAlert(error.message, true);
+        },
+        onCompleted: (result) => {
+            return result;
+        }
+    });
+
     const [editArtSeries] = useMutation(UPDATE_ARTSERIES_BY_PK, {
         onError: (error) => {
             console.log(error);
@@ -76,13 +88,45 @@ const EditArt = ({ resultTraditionalArt, editHandle, showEdit, tempArtData, dime
         }
     };
 
+    const uploadImage = (e) => {
+        if(e.target.files && e.target.files[0]){
+            let img = e.target.files[0];
+            let {errorExist, errorDetail} = checkImageError(img);
+
+            if(errorExist){
+                setError({...error, artwork_image_url: errorDetail});
+            }else{
+                setImageFile(img);
+                setArtData({ ...artData, artwork_image_url: URL.createObjectURL(img) });
+
+                if(error.artwork_image_url){
+                    delete error.artwork_image_url;
+                    setError(error);
+                }
+            }
+        }
+    };
+
+
     const editDataBtn = async () => {
         setLoading(true);
         const { errorExist, tempErrors } = checkArtInput(artData);
         setError(tempErrors);
 
         if(!errorExist){
-            await editTraditionalArtWork({ variables: {id: artData.id, ...artData }});
+            try{
+                let response;
+                console.log(artData.artwork_image_url);
+                if(imageFile){
+                    response = await getImageUploadUrl({ variables: { contentType: "image/*"}})
+                    await uploadImageCloud(response.data.getImageUploadUrl.imageUploadUrl, imageFile);
+                    console.log(response.data);
+                }
+                await editTraditionalArtWork({ variables: {id: artData.id, ...artData, artwork_image_url: imageFile ? `https://axra.sgp1.digitaloceanspaces.com/Mula/${response.data.getImageUploadUrl.imageName}` : tempArtData.artwork_image_url }});
+
+            }catch(error){
+                console.log(error);
+            }
         }
         setLoading(false);
     }
@@ -113,6 +157,13 @@ const EditArt = ({ resultTraditionalArt, editHandle, showEdit, tempArtData, dime
                                     <TextField variant="filled" id="artwork_name" label="Artwork Name" value={artData.artwork_name} onChange={(e) => handleInput(e.target.value, "artwork_name")} InputLabelProps={{ shrink: true }} error={error.artwork_name ? true : false}/>
                                     {
                                         error.artwork_name && <small style={{ display: "block", color: "red", position: "absolute", top: "100%", left: 5 }}>{error.artwork_name}</small>
+                                    }
+                                </FormControl>
+
+                                <FormControl sx={{ mx: 1, my: 1, minWidth: "300px"}}>
+                                    <TextField type="file" variant="filled" id="artwork_image_url" label="Artwork Image" onChange={uploadImage} accept="image/png, image/jpeg, image/jpg, image/gif, image/svg+xml" InputLabelProps={{ shrink: true }} error={error.artwork_image_url ? true : false}/>
+                                    {
+                                        error.artwork_image_url && <small style={{ display: "block", color: "red", position: "absolute", top: "100%", left: 5 }}>{error.artwork_image_url}</small>
                                     }
                                 </FormControl>
                                 

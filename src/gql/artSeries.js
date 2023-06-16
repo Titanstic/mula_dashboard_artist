@@ -35,6 +35,18 @@ const INSERT_ART_SERIES = gql`
             series_name
         }
     }  
+`;
+
+const UPDATE_ART_SERIES_BY_PK = gql`
+    mutation MyMutation($series_description: String!, $series_name: String!, $series_thumbnail_url_id: Int, $id: Int!) {
+        update_art_series(where: {id: {_eq: $id}}, _set: {series_description: $series_description, series_name: $series_name, series_thumbnail_url_id: $series_thumbnail_url_id}) {
+            returning {
+                series_name
+                series_description
+                series_thumbnail_url_id
+            }
+        }
+    }  
 `
 
-export { GET_ART_SERIES_BY_ARTIST_ID, GET_ART_SERIES_BY_TRADITIONAL_ID, INSERT_ART_SERIES };
+export { GET_ART_SERIES_BY_ARTIST_ID, GET_ART_SERIES_BY_TRADITIONAL_ID, INSERT_ART_SERIES, UPDATE_ART_SERIES_BY_PK };

@@ -113,8 +113,8 @@ const UPDATE_ART_TRADITIONAL_DISABLE_BY_PK = gql`
 `;
 
 const UPDATE_ART_TRADITIONAL_BY_PK = gql`
-      mutation UPDATE_ART_TRADITIONAL_BY_PK($id: Int!, $artwork_name: String!, $artwork_year: Int!, $current_price: Int!, $description: String!, $disabled: Boolean!, $fk_medium_type_id: Int!, $height: numeric!, $width: numeric!) {
-            update_traditional_art_work_by_pk(pk_columns: {id: $id}, _set: {artwork_name: $artwork_name, artwork_year: $artwork_year, current_price: $current_price, description: $description, disabled: $disabled, fk_medium_type_id: $fk_medium_type_id, height: $height, width: $width}) {
+      mutation UPDATE_ART_TRADITIONAL_BY_PK($id: Int!, $artwork_name: String!, $artwork_year: Int!, $current_price: Int!, $description: String!, $disabled: Boolean!, $fk_medium_type_id: Int!, $height: numeric!, $width: numeric!, $artwork_image_url: String!) {
+            update_traditional_art_work_by_pk(pk_columns: {id: $id}, _set: {artwork_name: $artwork_name, artwork_year: $artwork_year, current_price: $current_price, description: $description, disabled: $disabled, fk_medium_type_id: $fk_medium_type_id, height: $height, width: $width, artwork_image_url: $artwork_image_url}) {
                   id
             }
       }    
