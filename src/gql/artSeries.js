@@ -16,6 +16,18 @@ const GET_ART_SERIES_BY_ARTIST_ID = gql`
     }  
 `;
 
+const GET_ART_SERIES_BY_TRADITIONAL_ID = gql`
+    query MyQuery($fk_traditional_art_work_id: Int!) {
+        artist_art_series(where: {fk_traditional_art_work_id: {_eq: $fk_traditional_art_work_id}}) {
+            artist_art_series_art_sery {
+                series_name
+                id
+            }
+            id
+        }
+    }
+`;
+
 const INSERT_ART_SERIES = gql`
     mutation INSERT_ART_SERIES($fk_artist_id: Int!, $series_description: String, $series_name: String!, $series_thumbnail_url_id: Int) {
         insert_art_series_one(object: {fk_artist_id: $fk_artist_id, series_description: $series_description, series_name: $series_name, series_thumbnail_url_id: $series_thumbnail_url_id}) {
@@ -25,4 +37,4 @@ const INSERT_ART_SERIES = gql`
     }  
 `
 
-export { GET_ART_SERIES_BY_ARTIST_ID, INSERT_ART_SERIES };
+export { GET_ART_SERIES_BY_ARTIST_ID, GET_ART_SERIES_BY_TRADITIONAL_ID, INSERT_ART_SERIES };

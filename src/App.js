@@ -4,16 +4,19 @@ import MainRouters from "./router/MainRouters";
 import { AlertContextProvider } from "./context/AlertContext";
 import { AuthContextProvider } from "./context/AuthContext";
 import { NavContextProvider } from "./context/NavContext";
+import { GqlContextProvider } from "./context/GqlContext";
 
 function App() {
     return ( 
         <ApolloProvider client = { client } >
             <AuthContextProvider >
-                <NavContextProvider >
-                    <AlertContextProvider >
-                        <MainRouters/>
-                    </AlertContextProvider> 
-                </NavContextProvider> 
+                <GqlContextProvider>
+                    <NavContextProvider >
+                        <AlertContextProvider >
+                            <MainRouters/>
+                        </AlertContextProvider> 
+                    </NavContextProvider> 
+                </GqlContextProvider>
             </AuthContextProvider> 
         </ApolloProvider>
     );

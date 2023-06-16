@@ -11,16 +11,14 @@ import SearchIcon from "@mui/icons-material/Search";
 import Divider from "@mui/material/Divider";
 import DirectionsIcon from "@mui/icons-material/Directions";
 import InputBase from "@mui/material/InputBase";
-import {useLazyQuery} from "@apollo/client";
 import CreateArtSeries from "../component/artSeries/CreateArtSeries";
 import ArtSeriesData from "../component/artSeries/ArtSeriesData";
-import { GET_ART_SERIES_BY_ARTIST_ID } from "../gql/artSeries";
+import GqlContext from "../context/GqlContext";
 
 const ArtSeriesView = () => {
-    // useLazyQuery
-    const [ loadArtSeries, resultArtSeries ] = useLazyQuery(GET_ART_SERIES_BY_ARTIST_ID);
     // useConstext
     const { setNav } = useContext(NavContext);
+    const { loadArtSeriesArtist, resultArtSeriesArtist } = useContext(GqlContext);
     // useState
     const [ showCreate, setShowCreate ] = useState(false);
 
@@ -63,11 +61,11 @@ const ArtSeriesView = () => {
                 {/*End Nav*/}
 
                 {/* Start Art Series Data */}
-                <ArtSeriesData loadArtSeries={loadArtSeries} resultArtSeries={resultArtSeries}/>
+                <ArtSeriesData loadArtSeriesArtist={loadArtSeriesArtist} resultArtSeriesArtist={resultArtSeriesArtist}/>
                 {/* End Art Series Data */}
 
                 {
-                    showCreate && <CreateArtSeries showCreate={showCreate} createHandle={createHandle} resultArtSeries={resultArtSeries}/>
+                    showCreate && <CreateArtSeries showCreate={showCreate} createHandle={createHandle} resultArtSeriesArtist={resultArtSeriesArtist}/>
                 }
             </>
         </LayoutView>

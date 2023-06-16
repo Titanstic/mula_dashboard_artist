@@ -52,7 +52,6 @@ const LoginView = () => {
             if(result.AdminLogIn.accessToken){
                 setError({});
                 setFormData({});
-
                 generateUserToken(result);
 
                 showAlert("login successfully", false);

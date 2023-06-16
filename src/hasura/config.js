@@ -5,13 +5,20 @@ import {decodeUserToken} from "../composable/login";
 
 const authLink = setContext(( _ , { headers }) => {
     let userData = decodeUserToken();
+
+    if(userData){
+        return{
+            headers: {
+                ...headers,
+                authorization: userData ? `Bearer ${userData.token}` : null,
+            }
+        };
+    }
+
     return{
-        headers: {
-            ...headers,
-            authorization: userData ? `Bearer ${userData.token}` : null,
-            "x-hasura-admin-secret": "mula is very good",
-        }
-    };
+        headers: {...headers}
+    }
+
 });
 
 const errorLink = onError(({graphQLErrors, networkError}) => {

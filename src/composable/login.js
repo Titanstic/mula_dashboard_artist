@@ -26,6 +26,7 @@ const checkLoginInput = (data) => {
 
 const generateUserToken = (result) => {
     const decodedToken = jose.decodeJwt(result.AdminLogIn.accessToken);
+    console.log(decodeUserToken);
     const data = JSON.stringify({
         token: result.AdminLogIn.accessToken,
         userID: decodedToken.user_id,

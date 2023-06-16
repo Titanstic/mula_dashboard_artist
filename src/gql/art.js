@@ -23,6 +23,22 @@ const GET_TRADITIONAL_ARTWORK_BY_ARITSTID = gql`
                   disabled
                   id
                   pending
+                  height
+                  width
+                  traditional_art_work_artwork_medium_type {
+                        id
+                        medium_name
+                  }
+                  traditional_artwork_dimension {
+                        id
+                        dimension_name
+                  }
+                  traditional_art_work_artist_art_series {
+                        artist_art_series_art_sery {
+                              id
+                              series_name
+                        }
+                  }
             }
             traditional_art_work_aggregate(where: {fk_ownership_id: {_eq: $fk_ownership_id}}) {
                   aggregate {
@@ -94,6 +110,25 @@ const UPDATE_ART_TRADITIONAL_DISABLE_BY_PK = gql`
                   disabled
             }
       }    
+`;
+
+const UPDATE_ART_TRADITIONAL_BY_PK = gql`
+      mutation UPDATE_ART_TRADITIONAL_BY_PK($id: Int!, $artwork_name: String!, $artwork_year: Int!, $current_price: Int!, $description: String!, $disabled: Boolean!, $fk_medium_type_id: Int!, $height: numeric!, $width: numeric!) {
+            update_traditional_art_work_by_pk(pk_columns: {id: $id}, _set: {artwork_name: $artwork_name, artwork_year: $artwork_year, current_price: $current_price, description: $description, disabled: $disabled, fk_medium_type_id: $fk_medium_type_id, height: $height, width: $width}) {
+                  id
+            }
+      }    
+`;
+
+const UPDATE_ARTSERIES_BY_PK = gql`
+      mutation MyMutation($fk_traditional_art_work_id: Int!, $fk_art_series_id: Int!) {
+            update_artist_art_series(where: {fk_traditional_art_work_id: {_eq: $fk_traditional_art_work_id}}, _set: {fk_art_series_id: $fk_art_series_id}) {
+                  returning {
+                        fk_art_series_id
+                        id
+                  }
+            }
+      }
 `
 
-export { GET_ARTIST_DATA, GET_TRADITIONAL_ARTWORK_BY_ARITSTID, GET_ARTWORK_DIMENSION, GET_ART_SERIES_BY_ARTIST, GET_ARTWORK_MEDIUM_TYPE, GET_IMAGE_UPLOAD_URL, INSERT_ART_TRADITIONAL, INSERT_ARTIST_ART_SERIES, UPDATE_ART_TRADITIONAL_DISABLE_BY_PK };
+export { GET_ARTIST_DATA, GET_TRADITIONAL_ARTWORK_BY_ARITSTID, GET_ARTWORK_DIMENSION, GET_ART_SERIES_BY_ARTIST, GET_ARTWORK_MEDIUM_TYPE, GET_IMAGE_UPLOAD_URL, INSERT_ART_TRADITIONAL, INSERT_ARTIST_ART_SERIES, UPDATE_ART_TRADITIONAL_DISABLE_BY_PK, UPDATE_ART_TRADITIONAL_BY_PK, UPDATE_ARTSERIES_BY_PK};

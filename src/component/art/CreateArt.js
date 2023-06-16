@@ -3,69 +3,28 @@ import {Button, Card, CardContent, CardMedia, InputLabel, Modal, Select, TextFie
 import Box from "@mui/material/Box";
 import FormControl from "@mui/material/FormControl";
 import {ModalStyled, useStyles, checkImageError, uploadImageCloud, checkArtInput} from "../../composable/art";
-import {useContext, useState, useEffect} from "react";
-import {useLazyQuery, useMutation} from "@apollo/client";
-import {GET_ARTWORK_DIMENSION, GET_ARTWORK_MEDIUM_TYPE, GET_ART_SERIES_BY_ARTIST, GET_IMAGE_UPLOAD_URL, INSERT_ARTIST_ART_SERIES, INSERT_ART_TRADITIONAL} from "../../gql/art";
+import {useContext, useState} from "react";
+import {useMutation} from "@apollo/client";
+import {GET_IMAGE_UPLOAD_URL, INSERT_ARTIST_ART_SERIES, INSERT_ART_TRADITIONAL} from "../../gql/art";
 import MenuItem from "@mui/material/MenuItem";
 import AuthContext from "../../context/AuthContext";
 import { LoadingButton } from "@mui/lab";
 import AlertContext from "../../context/AlertContext";
 import RichTextEditor from "react-rte";
 
-const CreateArt = ({showCreate, createHandle, resultTraditionalArt}) => {
+const CreateArt = ({showCreate, createHandle, resultTraditionalArt, dimension, artSeries, artType}) => {
     // useContext
     const { userId, artistId } = useContext(AuthContext);
     const { showAlert } = useContext(AlertContext);
-    // useLazyQuery
-    const [ loadArtType, resultArtType ] = useLazyQuery(GET_ARTWORK_MEDIUM_TYPE);
-    const [ loadDimension, resultDimension ] = useLazyQuery(GET_ARTWORK_DIMENSION);
-    const [ loadArtSeries, resultArtSeries ] = useLazyQuery(GET_ART_SERIES_BY_ARTIST);
     // useState
-    const [artData, setArtData] = useState({disabled: false, lengthunit: "cm", widthunit: "cm"});
+    const [artData, setArtData] = useState({disabled: false});
     const [description, setDescription] = useState(RichTextEditor.createEmptyValue());
     const [imageFile, setImageFile] = useState(null);
     const [error, setError] = useState({});
-    const [dimension, setDimension] = useState(null);
-    const [ artSeries, setArtSeries ] = useState(null);
-    const [artType, setArtType] = useState(null);
     const [loading, setLoading] = useState(false);
 
     const classes = useStyles();
 
-    // Start UseEffect
-    // For Art Type
-    useEffect(() => {
-        loadArtType();
-    }, [loadArtType])
-
-    useEffect(() => {
-        if(resultArtType.data){
-            setArtType(resultArtType.data.artwork_medium_type);
-        }
-    }, [resultArtType])
-
-    // For Art Series
-    useEffect(() => {
-        loadArtSeries({ variables: { fk_artist_id: artistId }})
-    }, [loadArtSeries])
-
-    useEffect(() => {
-        if(resultArtSeries.data){
-            setArtSeries(resultArtSeries.data.art_series);
-        }
-    }, [resultArtSeries])
-
-    // For Art Dimension
-    useEffect(() => {
-        loadDimension();
-    }, [loadDimension])
-
-    useEffect(() => {
-        if(resultDimension.data){
-            setDimension(resultDimension.data.artwork_dimensions);
-        }
-    }, [resultDimension])
-    // End UseEffect
 
     // Start Mutation
     const [getImageUploadUrl] = useMutation(GET_IMAGE_UPLOAD_URL, {
@@ -119,6 +78,11 @@ const CreateArt = ({showCreate, createHandle, resultTraditionalArt}) => {
     const handleDescription = (value) => {
         setDescription(value);
         setArtData({ ...artData, "description": value.toString("html")});
+
+        if(error.description){
+            delete error.description;
+            setError(error);
+        }
     }
 
     const uploadImage = (e) => {
@@ -253,9 +217,6 @@ const toolbarConfig = {
                                                     <MenuItem disabled>Loading ...</MenuItem>
                                             }
                                         </Select>
-                                        {
-                                            error.fk_medium_type_id && <small style={{ display: "block", color: "red", position: "absolute", top: "100%", left: 5 }}>{error.fk_medium_type_id}</small>
-                                        }
                                     </FormControl>
 
                                     <FormControl sx={{ mx: 1, my: 1, minWidth: "300px"}}>
@@ -283,7 +244,7 @@ const toolbarConfig = {
                                             <TextField variant="filled" id="Length" label="Length" sx={{ maxWidth: "85px"}} onChange={(e) => handleInput(e.target.value, "width")} error={error["width"] ? true : false}/>
                                             <TextField variant="filled" id="Length" label="Width" sx={{ maxWidth: "100px"}} onChange={(e) => handleInput(e.target.value, "height")} error={error["height"] ? true : false}/>
 
-                                            <Select labelId="unit" label="unit" defaultValue="cm" sx={{ maxWidth: "70px"}} onChange={(e) => handleInput(e.target.value, "fk_dimension")}>
+                                            <Select labelId="unit" label="unit"  sx={{ maxWidth: "100px"}} onChange={(e) => handleInput(e.target.value, "fk_dimension")} error={error["fk_dimension"] ? true : false}>
                                                 {
                                                     dimension ?
                                                         dimension.length > 0 ?
@@ -298,7 +259,7 @@ const toolbarConfig = {
                                             </Select>
                                         </div>
                                         {
-                                            error.dimensions && <small style={{ display: "block", color: "red", position: "absolute", top: "100%", left: 5 }}>{error.dimensions}</small>
+                                            error.fk_dimension && <small style={{ display: "block", color: "red", position: "absolute", top: "100%", left: 5 }}>{error.dimensions}</small>
                                         }
                                     </FormControl>
 
@@ -317,10 +278,15 @@ const toolbarConfig = {
                                         </Select>
                                     </FormControl>
 
-                                    <Box>
-                                        <InputLabel>Description</InputLabel>
+                                    <Box sx={{ mx: 1, my: 1, minWidth: "300px", position: "relative"}}>
+                                        <InputLabel id="description">Description</InputLabel>
 
-                                        <RichTextEditor className="description-text" onChange={handleDescription} value={description} toolbarConfig={toolbarConfig} />
+                                        <Box  style={{  border: `${error.description ? "1px solid red" : ""}` }}>
+                                            <RichTextEditor labelId="description" className="description-text" onChange={handleDescription} value={description} toolbarConfig={toolbarConfig} />
+                                        </Box>
+                                        {
+                                            error.description && <small style={{ display: "block", color: "red", position: "absolute", top: "100%", left: 5 }}>{error.current_price}</small>
+                                        }
                                     </Box>
                                 </Box>
                             </CardContent>

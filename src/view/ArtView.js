@@ -17,22 +17,68 @@ import {useLazyQuery} from "@apollo/client";
 import {GET_TRADITIONAL_ARTWORK_BY_ARITSTID} from "../gql/art";
 import ShowOrNotArt from "../component/art/ShowOrNotArt";
 import EditArt from "../component/art/EditArt";
+import {GET_ART_SERIES_BY_ARTIST, GET_ARTWORK_DIMENSION, GET_ARTWORK_MEDIUM_TYPE} from "../gql/art";
 import DetailArt from "../component/art/DetailArt";
+import AuthContext from "../context/AuthContext";
 
 
 const ArtView = () => {
+    // useContext
+    const { artistId } = useContext(AuthContext);
     const { setNav } = useContext(NavContext);
+    // useState 
     const [showCreate, setShowCreate] = useState(false);
     const [showDetail, setShowDetail] = useState(false);
     const [showEdit, setShowEdit] = useState(false);
     const [showDisable, setShowDisable] = useState(false);
     const [tempArtData, setTempArtData] = useState(null);
+    const [dimension, setDimension] = useState(null);
+    const [ artSeries, setArtSeries ] = useState(null);
+    const [artType, setArtType] = useState(null);
     // useLazyQuery
+    const [ loadArtSeries, resultArtSeries ] = useLazyQuery(GET_ART_SERIES_BY_ARTIST);
     const [ loadTraditionalArt, resultTraditionalArt ] = useLazyQuery(GET_TRADITIONAL_ARTWORK_BY_ARITSTID);
-
+    const [ loadArtType, resultArtType ] = useLazyQuery(GET_ARTWORK_MEDIUM_TYPE);
+    const [ loadDimension, resultDimension ] = useLazyQuery(GET_ARTWORK_DIMENSION);
+    
+    // Start UseEffect
     useEffect(() => {
         setNav("art");
     })
+
+    // For Art Type
+    useEffect(() => {
+        loadArtType();
+    }, [loadArtType])
+
+    useEffect(() => {
+        if(resultArtType.data){
+            setArtType(resultArtType.data.artwork_medium_type);
+        }
+    }, [resultArtType])
+
+    // For Art Series
+    useEffect(() => {
+        loadArtSeries({ variables: { fk_artist_id: artistId }})
+    }, [loadArtSeries, artistId])
+
+    useEffect(() => {
+        if(resultArtSeries.data){
+            setArtSeries(resultArtSeries.data.art_series);
+        }
+    }, [resultArtSeries])
+
+    // For Art Dimension
+    useEffect(() => {
+        loadDimension();
+    }, [loadDimension])
+
+    useEffect(() => {
+        if(resultDimension.data){
+            setDimension(resultDimension.data.artwork_dimensions);
+        }
+    }, [resultDimension])
+    // End UseEffect
 
     // Start Function
     // => For Create Handle
@@ -87,7 +133,7 @@ const ArtView = () => {
                 {/*End Art Data*/}
 
                 {
-                    showCreate && <CreateArt showCreate={showCreate} createHandle={createHandle} resultTraditionalArt={resultTraditionalArt}/>
+                    showCreate && <CreateArt showCreate={showCreate} createHandle={createHandle} resultTraditionalArt={resultTraditionalArt} dimension={dimension} artSeries={artSeries} artType={artType}/>
                 }
 
                 {
@@ -95,7 +141,7 @@ const ArtView = () => {
                 }
 
                 {
-                    showEdit && <EditArt editHandle={editHandle} showEdit={showEdit} tempArtData={tempArtData}/>
+                    showEdit && <EditArt resultTraditionalArt={resultTraditionalArt} editHandle={editHandle} showEdit={showEdit} tempArtData={tempArtData} dimension={dimension} artSeries={artSeries} artType={artType}/>
                 }
 
                 {

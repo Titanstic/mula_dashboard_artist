@@ -115,6 +115,10 @@ const checkArtInput = (data) => {
         tempErrors["width"] = "Width is required.";
         errorExist = true;
     }
+    if (!data.fk_dimension) {
+        tempErrors.fk_dimension = "Unit is required.";
+        errorExist = true;
+    }
     if (!data.current_price) {
         tempErrors.current_price = "Price is required.";
         errorExist = true;

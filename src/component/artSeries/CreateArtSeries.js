@@ -10,7 +10,7 @@ import { useMutation } from "@apollo/client";
 import { INSERT_ART_SERIES } from "../../gql/artSeries";
 import AlertContext from "../../context/AlertContext";
 
-const CreateArtSeries = ({showCreate, createHandle, resultArtSeries}) => {
+const CreateArtSeries = ({showCreate, createHandle, resultArtSeriesArtist}) => {
     // useState
     const [ seriesData, setSeriesData] = useState({});
     const [error, setError] = useState({});
@@ -28,7 +28,7 @@ const CreateArtSeries = ({showCreate, createHandle, resultArtSeries}) => {
         onCompleted: (result) => {
             console.log(result);
             showAlert("Insert Successfully", false);
-            resultArtSeries.refetch();
+            resultArtSeriesArtist.refetch();
             createHandle();
         }
     });
