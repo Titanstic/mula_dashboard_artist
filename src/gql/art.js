@@ -10,8 +10,8 @@ const GET_ARTIST_DATA = gql`
 `;
 
 const GET_TRADITIONAL_ARTWORK_BY_ARITSTID = gql`
-      query MyQuery($fk_ownership_id: Int!, $limit: Int!, $offset: Int!) {
-            traditional_art_work(where: {fk_ownership_id: {_eq: $fk_ownership_id}}, order_by: {id: desc}, limit: $limit, offset: $offset) {
+      query MyQuery($fk_ownership_id: Int!, $limit: Int!, $offset: Int!, $artwork_name: String) {
+            traditional_art_work(where: {fk_ownership_id: {_eq: $fk_ownership_id}, artwork_name: {_ilike: $artwork_name}}, order_by: {id: desc}, limit: $limit, offset: $offset) {
                   artwork_image_url
                   artwork_name
                   artwork_year
@@ -40,7 +40,7 @@ const GET_TRADITIONAL_ARTWORK_BY_ARITSTID = gql`
                         }
                   }
             }
-            traditional_art_work_aggregate(where: {fk_ownership_id: {_eq: $fk_ownership_id}}) {
+            traditional_art_work_aggregate(where: {fk_ownership_id: {_eq: $fk_ownership_id}, artwork_name: {_ilike: $artwork_name}}) {
                   aggregate {
                         count
                   }

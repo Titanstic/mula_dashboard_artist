@@ -1,14 +1,14 @@
 import { gql } from "@apollo/client";
 
 const GET_ART_SERIES_BY_ARTIST_ID = gql`
-    query GET_ART_SERIES_BY_ARTIST_ID($limit: Int!, $offset: Int!, $fk_artist_id: Int!, $id: order_by = desc) {
-        art_series(limit: $limit, offset: $offset, where: {fk_artist_id: {_eq: $fk_artist_id}}, order_by: {id: $id}) {
+    query GET_ART_SERIES_BY_ARTIST_ID($limit: Int!, $offset: Int!, $fk_artist_id: Int!, $id: order_by = desc, $series_name: String) {
+        art_series(limit: $limit, offset: $offset, where: {fk_artist_id: {_eq: $fk_artist_id}, series_name: {_ilike: $series_name}}, order_by: {id: $id}) {
             id
             series_description
             series_name
             series_thumbnail_url_id
         }
-        art_series_aggregate(where: {fk_artist_id: {_eq: $fk_artist_id}}) {
+        art_series_aggregate(where: {fk_artist_id: {_eq: $fk_artist_id}, series_name: {_ilike: $series_name}}) {
             aggregate {
                 count
             }

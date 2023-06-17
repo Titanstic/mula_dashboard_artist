@@ -67,9 +67,9 @@ const EditArt = ({ resultTraditionalArt, editHandle, showEdit, tempArtData, dime
             }
             
             resultTraditionalArt.refetch();
-            editHandle(null);
             setArtData(null);
             showAlert("Edit Successfully", false);
+            editHandle(null);
         }
     });
     // End Mutation
@@ -116,11 +116,9 @@ const EditArt = ({ resultTraditionalArt, editHandle, showEdit, tempArtData, dime
         if(!errorExist){
             try{
                 let response;
-                console.log(artData.artwork_image_url);
                 if(imageFile){
                     response = await getImageUploadUrl({ variables: { contentType: "image/*"}})
                     await uploadImageCloud(response.data.getImageUploadUrl.imageUploadUrl, imageFile);
-                    console.log(response.data);
                 }
                 await editTraditionalArtWork({ variables: {id: artData.id, ...artData, artwork_image_url: imageFile ? `https://axra.sgp1.digitaloceanspaces.com/Mula/${response.data.getImageUploadUrl.imageName}` : tempArtData.artwork_image_url }});
 

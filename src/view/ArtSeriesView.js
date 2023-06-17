@@ -21,6 +21,8 @@ const ArtSeriesView = () => {
     const { setNav } = useContext(NavContext);
     const { loadArtSeriesArtist, resultArtSeriesArtist } = useContext(GqlContext);
     // useState
+    const [ searchName, setSearchName ] = useState("");
+    const [ searchBtn, setSearchBtn ] = useState(false);
     const [ showCreate, setShowCreate ] = useState(false);
     const [ showEdit, setShowEdit ] = useState(false);
     const [ tempData, setTempData ] = useState(null);
@@ -41,6 +43,19 @@ const ArtSeriesView = () => {
         console.log(data);
         setShowEdit(!showEdit);
         setTempData(data);
+    };
+
+    const searchHandle = (e) => {
+        if(e.target.value === ""){
+            setSearchBtn(!searchBtn);
+        }
+        setSearchName(e.target.value);
+    };
+
+    const searchDataHandle = () => {
+        if(searchName !== ""){
+            setSearchBtn(!searchBtn);
+        }
     }
     // End Function
 
@@ -59,8 +74,8 @@ const ArtSeriesView = () => {
                         <Button variant="contained" sx={{ width: 90, height: 60, p: 1, mr: 2, fontWeight: "bold"}} color="secondary" onClick={createHandle}>Add</Button>
 
                         <Paper component="form" sx={{ p: "2px 4px", display: "flex", alignItems: "center", width: 350}}>
-                            <InputBase id="search-by-artid" sx={{ ml: 1, flex: 1 }} placeholder="Search By Art Id" type="search" />
-                            <IconButton type="button" sx={{ p: "10px" }} aria-label="search"><SearchIcon/></IconButton>
+                            <InputBase id="search-by-artid" sx={{ ml: 1, flex: 1 }} onChange={searchHandle} placeholder="Search By Art Id" type="search" />
+                            <IconButton type="button" sx={{ p: "10px" }} aria-label="search" onClick={searchDataHandle}><SearchIcon/></IconButton>
                             <Divider sx={{height: 28, m: 0.5 }} orientation="vertical"/>
                             <IconButton sx={{ p: "10px" }} aria-label="directions"><DirectionsIcon/></IconButton>
                         </Paper>
@@ -70,7 +85,7 @@ const ArtSeriesView = () => {
                 {/*End Nav*/}
 
                 {/* Start Art Series Data */}
-                <ArtSeriesData loadArtSeriesArtist={loadArtSeriesArtist} resultArtSeriesArtist={resultArtSeriesArtist} editHandle={editHandle}/>
+                <ArtSeriesData loadArtSeriesArtist={loadArtSeriesArtist} resultArtSeriesArtist={resultArtSeriesArtist} editHandle={editHandle} searchName={searchName} searchBtn={searchBtn}/>
                 {/* End Art Series Data */}
 
                 {

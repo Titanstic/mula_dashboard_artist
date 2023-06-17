@@ -5,7 +5,7 @@ import {useContext, useEffect, useState} from "react";
 import AuthContext from "../../context/AuthContext";
 import loadingImage from "../../assets/image/loading.gif";
 
-const ArtData = ({detailHandle, editHandle, disableHandle, loadTraditionalArt, resultTraditionalArt}) => {
+const ArtData = ({detailHandle, editHandle, disableHandle, loadTraditionalArt, resultTraditionalArt, searchName, searchBtn}) => {
     // useContext
     const { userId } = useContext(AuthContext);
     // useState
@@ -17,8 +17,10 @@ const ArtData = ({detailHandle, editHandle, disableHandle, loadTraditionalArt, r
 
     // Start useEffect
     useEffect(() => {
-        loadTraditionalArt({ variables: { fk_ownership_id: userId, limit: rowsPerPage, offset}})
-    }, [loadTraditionalArt, offset, rowsPerPage])
+        setArts(null);
+        setCount(0);
+        loadTraditionalArt({ variables: { fk_ownership_id: userId, limit: rowsPerPage, offset, artwork_name: `%${searchName}%`}})
+    }, [loadTraditionalArt, offset, rowsPerPage, searchBtn])
 
     useEffect(() => {
         if(resultTraditionalArt.data){
@@ -52,6 +54,7 @@ const ArtData = ({detailHandle, editHandle, disableHandle, loadTraditionalArt, r
                                 <StyledTableCell style={{minWidth: 70, fontWeight: "bold"}}>ID</StyledTableCell>
                                 <StyledTableCell style={{minWidth: 70, fontWeight: "bold"}}>IMAGE</StyledTableCell>
                                 <StyledTableCell style={{minWidth: 70, fontWeight: "bold"}}>ART NAME</StyledTableCell>
+                                <StyledTableCell style={{minWidth: 70, fontWeight: "bold"}}>Series</StyledTableCell>
                                 <StyledTableCell style={{minWidth: 70, fontWeight: "bold"}}>CURRENT PRICE</StyledTableCell>
                                 <StyledTableCell style={{minWidth: 70, fontWeight: "bold"}}>Status</StyledTableCell>
                                 <StyledTableCell style={{minWidth: 70, fontWeight: "bold"}}>ACTION</StyledTableCell>
@@ -69,6 +72,7 @@ const ArtData = ({detailHandle, editHandle, disableHandle, loadTraditionalArt, r
                                                     <Avatar sx={{ width: 56, height: 56}} alt="test" src={art.artwork_image_url}/>
                                                 </StyledTableCell>
                                                 <StyledTableCell>{art.artwork_name}</StyledTableCell>
+                                                <StyledTableCell>{art.traditional_art_work_artist_art_series.length > 0 ? art.traditional_art_work_artist_art_series[0].artist_art_series_art_sery.series_name : "-"}</StyledTableCell>
                                                 <StyledTableCell>{Number(art.current_price).toLocaleString("en-US")}</StyledTableCell>
                                                 <StyledTableCell>
                                                     <Button size="small" variant="contained" color={art.pending ? "warning" : "success"} sx={{ p: 1, cursor: "default"}}>{art.pending ? "pending" : "completed"}</Button>
@@ -82,11 +86,11 @@ const ArtData = ({detailHandle, editHandle, disableHandle, loadTraditionalArt, r
                                         ))
                                         :
                                         <StyledTableRow hover role="checkbox" tableindex={-1}>
-                                            <StyledTableCell sx={{ textAlign: "center", fontWeight: "bold" }} colSpan={5}>No Data</StyledTableCell>
+                                            <StyledTableCell sx={{ textAlign: "center", fontWeight: "bold" }} colSpan={7}>No Data</StyledTableCell>
                                         </StyledTableRow>
                                     :
                                     <StyledTableRow hover role="checkbox" tableindex={-1}>
-                                        <StyledTableCell sx={{ textAlign: "center", fontWeight: "bold" }} colSpan={6}>
+                                        <StyledTableCell sx={{ textAlign: "center", fontWeight: "bold" }} colSpan={7}>
                                             <span style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                                                 <img src={loadingImage} width="20px" style={{ marginRight: "10px" }} alt="loading"/> Loading ...
                                             </span>

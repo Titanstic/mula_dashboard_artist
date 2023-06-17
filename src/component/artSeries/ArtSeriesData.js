@@ -5,7 +5,7 @@ import {useContext, useEffect, useState} from "react";
 import AuthContext from "../../context/AuthContext";
 import loadingImage from "../../assets/image/loading.gif";
 
-const ArtSeriesData = ({loadArtSeriesArtist, resultArtSeriesArtist, editHandle}) => {
+const ArtSeriesData = ({loadArtSeriesArtist, resultArtSeriesArtist, editHandle, searchName, searchBtn}) => {
     // useConstext
     const { artistId } = useContext(AuthContext);
     // useState
@@ -18,9 +18,11 @@ const ArtSeriesData = ({loadArtSeriesArtist, resultArtSeriesArtist, editHandle})
     //Start UseEffect
     useEffect(() => {
         if(artistId){
-            loadArtSeriesArtist({ variables: { limit: rowsPerPage, offset: offset, fk_artist_id: artistId}});
+            setArtSeries(null);
+            setCount(0);
+            loadArtSeriesArtist({ variables: { limit: rowsPerPage, offset: offset, fk_artist_id: artistId, series_name: `%${searchName}%`}});
         }
-    }, [loadArtSeriesArtist, artistId, offset, rowsPerPage])
+    }, [loadArtSeriesArtist, artistId, offset, rowsPerPage, searchBtn])
 
     useEffect(() => {
         if(resultArtSeriesArtist.data){
