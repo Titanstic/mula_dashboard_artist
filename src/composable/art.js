@@ -96,6 +96,10 @@ const checkArtInput = (data) => {
         tempErrors.artwork_name = "Artwork Name is required.";
         errorExist = true;
     }
+    if (!data.artwork_name_mm) {
+        tempErrors.artwork_name_mm = "Artwork Name (MM) is required.";
+        errorExist = true;
+    }
     if (!data.artwork_image_url) {
         tempErrors.artwork_image_url = "Image File is required.";
         errorExist = true;
@@ -126,6 +130,10 @@ const checkArtInput = (data) => {
     }
     if (!data.description) {
         tempErrors.description = "Description is required.";
+        errorExist = true;
+    }
+    if (!data.description_mm) {
+        tempErrors.description_mm = "Description(MM) is required.";
         errorExist = true;
     }
 

@@ -37,6 +37,7 @@ const LayoutView = ({children}) => {
             setUserId(userToken.userID);
             loadArtist({variables: { fk_user_id: userToken.userID}})
         }else{
+            window.localStorage.removeItem("mulaloggeduser");
             showAlert("Please Login First", true);
             navigate("/");
         }

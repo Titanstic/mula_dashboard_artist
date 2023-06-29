@@ -10,6 +10,7 @@ import AlertContext from "../../context/AlertContext";
 
 
 const EditArt = ({ resultTraditionalArt, editHandle, showEdit, tempArtData, dimension, artSeries, artType}) => {
+    console.log(tempArtData);
     // useState
     const [ artData, setArtData ] = useState({ ...tempArtData, fk_dimension: tempArtData.traditional_artwork_dimension.id});
     const [ error, setError ] = useState({});
@@ -159,6 +160,13 @@ const EditArt = ({ resultTraditionalArt, editHandle, showEdit, tempArtData, dime
                                 </FormControl>
 
                                 <FormControl sx={{ mx: 1, my: 1, minWidth: "300px"}}>
+                                        <TextField variant="filled" id="artwork_name_mm" label="Artwork Name(MM)" value={artData.artwork_name_mm} onChange={(e) => handleInput(e.target.value, "artwork_name_mm")} InputLabelProps={{ shrink: true }} error={error.artwork_name_mm ? true : false}/>
+                                        {
+                                            error.artwork_name_mm && <small style={{ display: "block", color: "red", position: "absolute", top: "100%", left: 5 }}>{error.artwork_name_mm}</small>
+                                        }
+                                </FormControl>
+
+                                <FormControl sx={{ mx: 1, my: 1, minWidth: "300px"}}>
                                     <TextField type="file" variant="filled" id="artwork_image_url" label="Artwork Image" onChange={uploadImage} accept="image/png, image/jpeg, image/jpg, image/gif, image/svg+xml" InputLabelProps={{ shrink: true }} error={error.artwork_image_url ? true : false}/>
                                     {
                                         error.artwork_image_url && <small style={{ display: "block", color: "red", position: "absolute", top: "100%", left: 5 }}>{error.artwork_image_url}</small>
@@ -254,6 +262,13 @@ const EditArt = ({ resultTraditionalArt, editHandle, showEdit, tempArtData, dime
                                                     <TextField variant="filled" id="description" label="Description" defaultValue={artData.description} onChange={(e) => handleInput(e.target.value, "description")} error={error.description ? true : false}/>
                                                     {
                                                         error.description && <small style={{ display: "block", color: "red", position: "absolute", top: "100%", left: 5 }}>{error.description}</small>
+                                                    }
+                                                </FormControl>
+
+                                                <FormControl sx={{ mx: 1, my: 1, minWidth: "300px"}}>
+                                                    <TextField variant="filled" id="description" label="Description MM" defaultValue={artData.description_mm} onChange={(e) => handleInput(e.target.value, "description_mm")} error={error.description_mm ? true : false}/>
+                                                    {
+                                                        error.description_mm && <small style={{ display: "block", color: "red", position: "absolute", top: "100%", left: 5 }}>{error.description_mm}</small>
                                                     }
                                                 </FormControl>
 

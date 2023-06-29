@@ -39,6 +39,8 @@ const GET_TRADITIONAL_ARTWORK_BY_ARITSTID = gql`
                               series_name
                         }
                   }
+                  artwork_name_mm
+                  description_mm
             }
             traditional_art_work_aggregate(where: {fk_ownership_id: {_eq: $fk_ownership_id}, artwork_name: {_ilike: $artwork_name}}) {
                   aggregate {
@@ -88,8 +90,8 @@ const GET_IMAGE_UPLOAD_URL = gql`
 `;
 
 const INSERT_ART_TRADITIONAL = gql`
-    mutation INSERT_ART_TRADITIONAL($artwork_image_url: String!, $artwork_name: String!, $fk_medium_type_id: Int!, $artwork_year: Int!, $current_price: Int!, $description: String!, $dimensions: String!, $disabled: Boolean!, $fk_ownership_id: Int!, $pending: Boolean!, $fk_artist_id: Int!, $height: numeric!, $width: numeric!, $fk_dimension: Int!) {
-          insert_traditional_art_work_one(object: {artwork_image_url: $artwork_image_url, artwork_name: $artwork_name, fk_medium_type_id: $fk_medium_type_id, artwork_year: $artwork_year, current_price: $current_price, description: $description, dimensions: $dimensions, disabled: $disabled, fk_ownership_id: $fk_ownership_id, pending: $pending, fk_artist_id: $fk_artist_id, height: $height, width: $width, fk_dimension: $fk_dimension}) {
+    mutation INSERT_ART_TRADITIONAL($artwork_image_url: String!, $artwork_name: String!, $fk_medium_type_id: Int!, $artwork_year: Int!, $current_price: Int!, $description: String!, $dimensions: String!, $disabled: Boolean!, $fk_ownership_id: Int!, $pending: Boolean!, $fk_artist_id: Int!, $height: numeric!, $width: numeric!, $fk_dimension: Int!, $artwork_name_mm: String!, $description_mm: String!) {
+          insert_traditional_art_work_one(object: {artwork_image_url: $artwork_image_url, artwork_name: $artwork_name, fk_medium_type_id: $fk_medium_type_id, artwork_year: $artwork_year, current_price: $current_price, description: $description, dimensions: $dimensions, disabled: $disabled, fk_ownership_id: $fk_ownership_id, pending: $pending, fk_artist_id: $fk_artist_id, height: $height, width: $width, fk_dimension: $fk_dimension, artwork_name_mm: $artwork_name_mm, description_mm: $description_mm}) {
                 id
           }
     }
@@ -113,8 +115,8 @@ const UPDATE_ART_TRADITIONAL_DISABLE_BY_PK = gql`
 `;
 
 const UPDATE_ART_TRADITIONAL_BY_PK = gql`
-      mutation UPDATE_ART_TRADITIONAL_BY_PK($id: Int!, $artwork_name: String!, $artwork_year: Int!, $current_price: Int!, $description: String!, $disabled: Boolean!, $fk_medium_type_id: Int!, $height: numeric!, $width: numeric!, $artwork_image_url: String!) {
-            update_traditional_art_work_by_pk(pk_columns: {id: $id}, _set: {artwork_name: $artwork_name, artwork_year: $artwork_year, current_price: $current_price, description: $description, disabled: $disabled, fk_medium_type_id: $fk_medium_type_id, height: $height, width: $width, artwork_image_url: $artwork_image_url}) {
+      mutation UPDATE_ART_TRADITIONAL_BY_PK($id: Int!, $artwork_name: String!, $artwork_year: Int!, $current_price: Int!, $description: String!, $disabled: Boolean!, $fk_medium_type_id: Int!, $height: numeric!, $width: numeric!, $artwork_image_url: String!, $description_mm: String!, $artwork_name_mm: String!) {
+            update_traditional_art_work_by_pk(pk_columns: {id: $id}, _set: {artwork_name: $artwork_name, artwork_year: $artwork_year, current_price: $current_price, description: $description, disabled: $disabled, fk_medium_type_id: $fk_medium_type_id, height: $height, width: $width, artwork_image_url: $artwork_image_url, description_mm: $description_mm, artwork_name_mm: $artwork_name_mm}) {
                   id
             }
       }    

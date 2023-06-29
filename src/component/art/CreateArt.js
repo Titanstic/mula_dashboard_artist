@@ -19,6 +19,7 @@ const CreateArt = ({showCreate, createHandle, resultTraditionalArt, dimension, a
     // useState
     const [artData, setArtData] = useState({disabled: false});
     const [description, setDescription] = useState(RichTextEditor.createEmptyValue());
+    const [descriptionmm, setDescriptionM] = useState(RichTextEditor.createEmptyValue());
     const [imageFile, setImageFile] = useState(null);
     const [error, setError] = useState({});
     const [loading, setLoading] = useState(false);
@@ -81,6 +82,16 @@ const CreateArt = ({showCreate, createHandle, resultTraditionalArt, dimension, a
 
         if(error.description){
             delete error.description;
+            setError(error);
+        }
+    };
+
+    const handleDescriptionmm = (value) => {
+        setDescriptionM(value);
+        setArtData({ ...artData, "description_mm": value.toString("html")});
+
+        if(error.description_mm){
+            delete error.description_mm;
             setError(error);
         }
     }
@@ -181,9 +192,16 @@ const toolbarConfig = {
 
                                 <Box sx={{ display: "grid", gridTemplateColumns: "300px 300px 300px", gap: 2}}>
                                     <FormControl sx={{ mx: 1, my: 1, minWidth: "300px"}}>
-                                        <TextField variant="filled" id="artwork_name" label="Artwork Name" onChange={(e) => handleInput(e.target.value, "artwork_name")} error={error.artwork_name ? true : false}/>
+                                        <TextField variant="filled" id="artwork_name" label="Artwork Name(EN)" onChange={(e) => handleInput(e.target.value, "artwork_name")} error={error.artwork_name ? true : false}/>
                                         {
                                             error.artwork_name && <small style={{ display: "block", color: "red", position: "absolute", top: "100%", left: 5 }}>{error.artwork_name}</small>
+                                        }
+                                    </FormControl>
+
+                                    <FormControl sx={{ mx: 1, my: 1, minWidth: "300px"}}>
+                                        <TextField variant="filled" id="artwork_name_mm" label="Artwork Name(MM)" onChange={(e) => handleInput(e.target.value, "artwork_name_mm")} error={error.artwork_name_mm ? true : false}/>
+                                        {
+                                            error.artwork_name_mm && <small style={{ display: "block", color: "red", position: "absolute", top: "100%", left: 5 }}>{error.artwork_name_mm}</small>
                                         }
                                     </FormControl>
 
@@ -279,13 +297,24 @@ const toolbarConfig = {
                                     </FormControl>
 
                                     <Box sx={{ mx: 1, my: 1, minWidth: "300px", position: "relative"}}>
-                                        <InputLabel id="description">Description</InputLabel>
+                                        <InputLabel id="description">Description(EN)</InputLabel>
 
                                         <Box  style={{  border: `${error.description ? "1px solid red" : ""}` }}>
                                             <RichTextEditor labelId="description" className="description-text" onChange={handleDescription} value={description} toolbarConfig={toolbarConfig} />
                                         </Box>
                                         {
-                                            error.description && <small style={{ display: "block", color: "red", position: "absolute", top: "100%", left: 5 }}>{error.current_price}</small>
+                                            error.description && <small style={{ display: "block", color: "red", position: "absolute", top: "100%", left: 5 }}>{error.description}</small>
+                                        }
+                                    </Box>
+
+                                    <Box sx={{ mx: 1, my: 1, minWidth: "300px", position: "relative"}}>
+                                        <InputLabel id="description">Description(MM)</InputLabel>
+
+                                        <Box  style={{  border: `${error.description_mm ? "1px solid red" : ""}` }}>
+                                            <RichTextEditor labelId="description" className="description-text" onChange={handleDescriptionmm} value={descriptionmm} toolbarConfig={toolbarConfig} />
+                                        </Box>
+                                        {
+                                            error.description_mm && <small style={{ display: "block", color: "red", position: "absolute", top: "100%", left: 5 }}>{error.description_mm}</small>
                                         }
                                     </Box>
                                 </Box>
