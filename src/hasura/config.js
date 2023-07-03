@@ -37,7 +37,7 @@ const errorLink = onError(({graphQLErrors, networkError}) => {
     }
 });
 
-const httpLink = new HttpLink({ uri: "http://146.190.4.124:8080/v1/graphql"});
+const httpLink = new HttpLink({ uri: "https://mula.axra.app/v1/graphql"});
 
 const client = new ApolloClient({
     cache: new InMemoryCache(),

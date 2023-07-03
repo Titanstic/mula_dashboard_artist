@@ -46,7 +46,7 @@ const LayoutView = ({children}) => {
 
     useEffect(() => {
         if(resultArtist.data){
-            if(resultArtist.data.artist.length > 0){
+            if(resultArtist.data.artist){
                 setArtistId(resultArtist.data.artist[0].id);
             }else{
                 window.localStorage.removeItem("mulaloggeduser");
